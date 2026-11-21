@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D-Printed CD Nozzle | Tennessee Tech Capstone</title>
+<meta name="description" content="Design and testing of a 3D-printed converging-diverging nozzle for an undergraduate gas dynamics laboratory. Schlieren videos, test rig and nozzle design.">
+<meta property="og:title" content="Design and Testing of a 3D-Printed Converging-Diverging Nozzle">
+<meta property="og:description" content="Tennessee Tech Mechanical Engineering capstone, Fall 2026. Schlieren videos of shock diamonds from a Mach 2 nozzle.">
+<meta property="og:image" content="https://alholman4275-maker.github.io/cd-nozzle/img/og-image.jpg">
+<meta name="theme-color" content="#4F2D7F">
+<link rel="icon" href="img/logo.png">
+<style>
+:root{
+  --purple:#4F2D7F; --gold:#FFC72C; --ink:#1F1F24; --muted:#55555F;
+  --rule:#D0CCD8; --tint:#F3F0F8; --bg:#FFFFFF;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+img,video{max-width:100%;display:block}
+a{color:var(--purple)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+
+/* Header */
+header{padding:22px 0 18px;text-align:center}
+.head{display:flex;align-items:center;gap:20px}
+.head img{width:96px;height:96px;flex:none}
+.head .t{flex:1;text-align:left}
+h1{margin:0;color:var(--purple);font-size:clamp(1.35rem,3.6vw,2.15rem);line-height:1.2;font-weight:800}
+h1 span{display:block;font-size:.78em;font-weight:700;margin-top:4px}
+.team{margin:10px 0 2px;font-weight:700;font-size:1.02rem}
+.meta{margin:0;color:var(--muted);font-size:.9rem}
+.bar{height:8px;background:var(--purple);border-bottom:4px solid var(--gold)}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.96);border-bottom:1px solid var(--rule);backdrop-filter:saturate(1.4) blur(6px)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav a{flex:none;padding:10px 12px;font-size:.9rem;font-weight:600;text-decoration:none;color:var(--purple);white-space:nowrap}
+nav a:hover{background:var(--tint)}
+
+/* Sections */
+section{margin:30px 0}
+h2{margin:0 0 14px;background:var(--purple);color:#fff;font-size:1.2rem;font-weight:700;
+  padding:9px 14px;border-bottom:3px solid var(--gold)}
+.lead{color:var(--purple);font-weight:700;font-size:1.05rem;margin:0 0 8px}
+p{margin:0 0 12px}
+figure{margin:0 0 18px}
+figure img{width:100%;height:auto;border:1px solid var(--rule);background:#fff}
+figcaption{font-size:.88rem;color:var(--muted);margin-top:6px}
+figcaption b{color:var(--ink)}
+
+/* Params */
+.params{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--purple);margin:6px 0 8px}
+.params div{text-align:center;border-right:1px solid var(--rule)}
+.params div:last-child{border-right:0}
+.params span{display:block;background:var(--purple);color:#fff;font-weight:700;font-size:.88rem;padding:7px 4px}
+.params b{display:block;padding:9px 4px;font-size:1rem;font-weight:600}
+@media (max-width:720px){.params{grid-template-columns:repeat(3,1fr)}.params div:nth-child(3){border-right:0}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.stat{background:var(--tint);border-left:4px solid var(--purple);padding:10px 12px}
+.stat b{display:block;color:var(--purple);font-size:1.25rem}
+.stat span{font-size:.85rem;color:var(--muted)}
+
+/* Videos */
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.vid{background:var(--tint);border:1px solid var(--rule)}
+.vid video{width:100%;aspect-ratio:1/1;background:#000;object-fit:contain}
+.vid .cap{padding:10px 12px 12px}
+.vid h3{margin:0 0 4px;font-size:1rem;color:var(--purple)}
+.vid p{margin:0;font-size:.9rem}
+.vid .src{display:block;margin-top:6px;font-size:.78rem;color:var(--muted)}
+.note{font-size:.88rem;color:var(--muted)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+ul{margin:0 0 12px;padding-left:20px}
+li{margin-bottom:6px}
+.regimes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 16px}
+.regimes div{background:var(--tint);border-top:4px solid var(--purple);padding:10px 12px;font-size:.92rem}
+.regimes b{display:block;color:var(--purple)}
+
+/* Schlieren explainer */
+.sch{border:1px solid var(--rule);background:#fff}
+.sch-diagram{width:100%;height:auto;display:block;background:#FAF9FC;border-bottom:1px solid var(--rule)}
+.sch .lbl{font:600 13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;fill:var(--ink)}
+.sch .lbl.muted{fill:var(--muted);font-weight:500}
+.sch .lbl.red{fill:#C0392B}
+.sch-diagram g{transition:opacity .35s}
+.sch[data-step="1"] .s2,.sch[data-step="1"] .s3,.sch[data-step="1"] .s4,
+.sch[data-step="2"] .s3,.sch[data-step="2"] .s4,
+.sch[data-step="3"] .s4{opacity:0}
+.sch[data-step="4"] .s4 ~ * {}
+.sch-panel{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px;align-items:start}
+.view{text-align:center;font-size:.75rem;color:var(--muted)}
+.view svg{width:110px;height:110px;display:block;margin:0 auto 4px}
+.vbg{fill:#f4f4f4;transition:fill .35s}
+.sch[data-step="1"] .vbg{fill:#111}
+.sch[data-step="3"] .vbg,.sch[data-step="4"] .vbg{fill:#9a9aa2}
+.v4{opacity:0;transition:opacity .35s}
+.sch[data-step="4"] .v4{opacity:1}
+.txt{display:grid}
+.step-t{grid-area:1/1;visibility:hidden;margin:0}
+.sch[data-step="1"] [data-s="1"],.sch[data-step="2"] [data-s="2"],.sch[data-step="3"] [data-s="3"],.sch[data-step="4"] [data-s="4"]{visibility:visible}
+.sch-nav{grid-column:1/-1;display:flex;justify-content:center;align-items:center;gap:10px}
+.sch-nav button{font:inherit;font-weight:700;border:1px solid var(--purple);background:#fff;color:var(--purple);min-width:44px;height:44px;border-radius:22px;cursor:pointer}
+.sch-nav .dots{display:flex;gap:6px}
+.sch-nav button[aria-current="step"]{background:var(--purple);color:#fff}
+.sch-nav .prev,.sch-nav .next{font-size:1.4rem;line-height:1}
+.sch-scroll{overflow-x:auto;border-bottom:1px solid var(--rule)}
+.sch-scroll .sch-diagram{border-bottom:0}
+@media (max-width:720px){.sch-scroll .sch-diagram{min-width:620px}.sch-panel{grid-template-columns:1fr}.sch-nav .dots button{min-width:40px}}
+footer{margin-top:36px;border-top:4px solid var(--gold);background:var(--purple);color:#fff;font-size:.88rem}
+footer .wrap{padding-top:18px;padding-bottom:22px}
+footer p{margin:0 0 8px}
+footer a{color:var(--gold)}
+
+@media (max-width:720px){
+  .head{flex-direction:column;gap:10px}
+  .head .t{text-align:center}
+  .head img{width:76px;height:76px}
+  .grid2,.regimes{grid-template-columns:1fr}
+  .trio{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .trio figcaption{font-size:.78rem}
+  .vids{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head">
+    <img src="img/logo.png" width="96" height="96" alt="Tennessee Tech Mechanical &amp; Nuclear Engineering seal">
+    <div class="t">
+      <h1>Design and Testing of a 3D-Printed Converging-Diverging Nozzle <span>for an Undergraduate Gas Dynamics Laboratory</span></h1>
+      <p class="team">John Goins, Zachary Fisher, Allyson Holman, Raj Patel</p>
+      <p class="meta">Faculty Advisor: Dr. Udit Sharma · Department of Mechanical Engineering, Tennessee Technological University · Fall 2026</p>
+    </div>
+  </div>
+</header>
+<div class="bar"></div>
+
+<nav aria-label="Sections">
+  <div class="wrap">
+    <a href="#summary">Summary</a>
+    <a href="#videos">Videos</a>
+    <a href="#rig">Test rig</a>
+    <a href="#nozzles">Nozzles</a>
+    <a href="#how">How it works</a>
+    <a href="#schlieren">Schlieren</a>
+    <a href="#team">Team</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="summary">
+  <h2>Project Summary</h2>
+  <p class="lead">Students learn supersonic flow on paper but never see it.</p>
+  <p>We designed a planar Mach 2 converging-diverging nozzle, 3D-printed it in one piece from carbon-fiber PETG, and built a compressed-air test rig that measures pressure and temperature during each run. A schlieren optical system makes the shock waves in the exit jet visible, and supply pressure alone moves the jet through over-, perfectly and under-expanded flow. The rig is ready to become a hands-on Gas Dynamics lab at Tennessee Tech.</p>
+
+  <figure>
+    <a href="img/nozzle-cutaway.webp"><img src="img/nozzle-cutaway.webp" width="1800" height="600" alt="Section view of the nozzle colored by Mach number, from about 0 at the inlet to 2 at the exit"></a>
+    <figcaption><b>Nozzle section view</b> with the quasi-1D isentropic Mach number distribution. Flow is left to right.</figcaption>
+  </figure>
+
+  <p class="lead" style="margin-top:4px">Design parameters</p>
+  <div class="params">
+    <div><span>Exit Mach</span><b>2.0</b></div>
+    <div><span>Throat (mm)</span><b>20 × 5.9</b></div>
+    <div><span>Exit (mm)</span><b>20 × 10.3</b></div>
+    <div><span>A<sub>e</sub>/A*</span><b>1.73</b></div>
+    <div><span>Supply</span><b>100 psig</b></div>
+    <div><span>Material</span><b>PETG-CF</b></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>18.7 psia</b><span>Peak exit-duct pressure (17.8 psia in a second run; ambient 14.3 psia)</span></div>
+    <div class="stat"><b>130 psig</b><span>Maximum supply from lab compressor and receiver tanks</span></div>
+    <div class="stat"><b>$1,044.78</b><span>Total cost, less than half the lowest proposed budget</span></div>
+  </div>
+</section>
+
+<section id="videos">
+  <h2>Schlieren and Test Videos</h2>
+  <p>Tap a video to play. The videos were stabilized and flicker-reduced in software. They start muted, so tap the speaker icon for sound. Tap any image on this page to see it full size.</p>
+  <div class="vids">
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/IMG_2485.jpg" width="480" height="480">
+        <source src="video/IMG_2485.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Shock diamonds, close-up</h3><p>The clearest view. The repeating bright and dark cells along the jet are shock diamonds: oblique shocks and expansion waves bouncing between the edges of the jet. They form only when the air leaving the nozzle is supersonic. Near the end the valve closes and the pattern fades.</p><span class="src">IMG_2485 · 0:10</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/NOV2A.jpg" width="480" height="480">
+        <source src="video/NOV2A.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Shock cells with the pressure transmitter installed</h3><p>The nozzle runs with the pressure transmitter (cable at top left) attached. The bright, slanted cells along the jet are the shock-diamond pattern, steady for the whole clip.</p><span class="src">Nov 2 test, clip 1 · 0:31</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/KNIFE.jpg" width="480" height="480">
+        <source src="video/KNIFE.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Knife-edge schlieren</h3><p>Filmed with a razor-blade knife edge at the focus. The nozzle is on the right and the jet flows to the left. Once the flow starts, a row of shock cells forms along the jet.</p><span class="src">Knife-edge test · 0:39</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/HAND.jpg" width="500" height="500">
+        <source src="video/HAND.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Heat from a hand: free convection</h3><p>No compressed air here. Warm air rising off a hand is a little less dense than the room air around it, and the schlieren system shows it moving. This is natural (free) convection: the air moves only because of the temperature difference. It shows how sensitive the optics are.</p><span class="src">Hand-heat test · 0:12</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/IMG_2482.jpg" width="480" height="480">
+        <source src="video/IMG_2482.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Full test run</h3><p>From valve opening to shutdown. The field is steady before the air starts. Once it flows, shock diamonds appear in the jet, and vibration from the flow makes the background brighten and dim.</p><span class="src">IMG_2482 · 1:54</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/NOV2B.jpg" width="480" height="480">
+        <source src="video/NOV2B.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Shock cells against a darker background</h3><p>The same setup in a second clip. Partway through, the background darkens and the bright shock cells stand out more and more until the flow stops.</p><span class="src">Nov 2 test, clip 2 · 0:27</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/IMG_2487.jpg" width="480" height="480">
+        <source src="video/IMG_2487.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Long run, shock cells holding steady</h3><p>A longer run from a different camera position. The shock cells stay in place while the background flashes. That shows the flashing comes from rig vibration moving the light across the knife edge, not from the flow itself.</p><span class="src">IMG_2487 · 3:08</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/IMG_2481.jpg" width="480" height="480">
+        <source src="video/IMG_2481.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>First schlieren test</h3><p>An early alignment test. The nozzle moves into the field of view and its exit jet shows up as a bright streak across the mirror.</p><span class="src">IMG_2481 · 0:06</span></div>
+    </article>
+    <article class="vid">
+      <video controls playsinline muted preload="none" poster="video/IMG_2488.jpg" width="480" height="480">
+        <source src="video/IMG_2488.mp4" type="video/mp4">
+      </video>
+      <div class="cap"><h3>Tuning the optics</h3><p>Filmed while the light source and camera were being adjusted, so brightness and focus change throughout. The jet and its shock cells are clearest around the middle of the clip.</p><span class="src">IMG_2488 · 3:58</span></div>
+    </article>
+  </div>
+</section>
+
+<section id="rig">
+  <h2>Test Rig and Instrumentation</h2>
+  <div class="grid2">
+    <figure>
+      <a href="img/test-rig.webp"><img src="img/test-rig.webp" width="1400" height="832" loading="lazy" alt="Assembled test rig on a purple-painted bench with ball valve, nozzle, pressure transmitter and DAQ"></a>
+      <figcaption><b>Assembled test rig</b> with ball valve, nozzle, pressure transmitter and DAQ.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/schlieren-schematic.webp"><img src="img/schlieren-schematic.webp" width="1300" height="929" loading="lazy" alt="Top-view schematic: flashlight and camera 1.8 m from a concave mirror behind the nozzle, with pressure and temperature lines running to a DAQ and laptop on a cart"></a>
+      <figcaption><b>Schlieren rig layout.</b> Light from the source reflects off the mirror, passes through the jet twice and returns to the camera.</figcaption>
+    </figure>
+  </div>
+  <div class="grid2">
+    <figure>
+      <a href="img/cad-setup.webp"><img src="img/cad-setup.webp" width="930" height="806" loading="lazy" alt="CAD model of the full test setup on sawhorses: mirror, nozzle, pipe, filter-regulator, ball valve and hose"></a>
+      <figcaption><b>CAD model of the full setup</b>, from the mirror on the left to the supply hose on the right.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/cad-exploded.webp"><img src="img/cad-exploded.webp" width="1400" height="438" loading="lazy" alt="Exploded CAD view of the air line: nozzle with pressure transmitter, pipe, filter-regulator, ball valve and hose"></a>
+      <figcaption><b>Exploded air line:</b> nozzle and pressure transmitter, pipe nipple, filter-regulator, ball valve and supply hose.</figcaption>
+    </figure>
+  </div>
+  <ul>
+    <li><b>Air supply:</b> lab compressor and receiver tanks, up to 130 psig</li>
+    <li><b>Sensors:</b> pressure transmitter and thermocouple, 3-channel LabVIEW DAQ</li>
+    <li><b>Schlieren:</b> single 900 mm focal-length mirror, point source and knife edge</li>
+  </ul>
+  <p class="lead">First attempt: a two-mirror Z-type system</p>
+  <p>Our first schlieren setup was a Z-type system on a 3D-printed rail, with two mirrors, a flashlight source and a phone camera. The two mirrors and the knife edge all had to line up at once, which proved too hard to keep aligned. We switched to the single-mirror layout above, which has far fewer parts to align.</p>
+  <div class="grid2">
+    <figure>
+      <a href="img/ztype-cad.webp"><img src="img/ztype-cad.webp" width="702" height="631" loading="lazy" alt="CAD render of the Z-type schlieren rail with two mirror mounts, a light-source mount and a camera clamp"></a>
+      <figcaption><b>Z-type rail, CAD.</b> Two mirror mounts, a source mount and a camera clamp on parallel rods.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/ztype-photo.webp"><img src="img/ztype-photo.webp" width="1200" height="900" loading="lazy" alt="The printed yellow Z-type schlieren rail on a lab table with two round mirrors, a flashlight and a phone"></a>
+      <figcaption><b>Z-type rail, as printed.</b> Mirrors at each end, a flashlight on the right and a phone camera on the left.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="nozzles">
+  <h2>Nozzle Design and Prototypes</h2>
+  <figure>
+    <a href="img/schlieren-labeled.webp"><img src="img/schlieren-labeled.webp" width="1600" height="744" loading="lazy" alt="Schlieren image of the exit jet with labeled nozzle exit, shock diamonds and jet boundary"></a>
+    <figcaption><b>Result.</b> Shock diamonds at the nozzle exit confirm supersonic flow. No normal shock formed inside the printed nozzle.</figcaption>
+  </figure>
+  <p class="lead">Supply pressure alone moves the jet through all three expansion regimes.</p>
+  <div class="trio">
+    <figure>
+      <a href="img/regime-over.webp"><img src="img/regime-over.webp" width="700" height="700" loading="lazy" alt="Schlieren image of an over-expanded jet with crossing oblique shocks near the exit"></a>
+      <figcaption><b>(a) Over-expanded</b>, p<sub>e</sub> &lt; p<sub>atm</sub>. Below the design pressure. Oblique shocks squeeze the jet.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/regime-perfect.webp"><img src="img/regime-perfect.webp" width="700" height="700" loading="lazy" alt="Schlieren image of a nearly perfectly expanded jet with a long, even row of weak shock cells"></a>
+      <figcaption><b>(b) Perfectly expanded</b>, p<sub>e</sub> = p<sub>atm</sub>. Near the 100 psig design point. Only weak waves remain.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/regime-under.webp"><img src="img/regime-under.webp" width="700" height="700" loading="lazy" alt="Schlieren image of an under-expanded jet with large round shock cells"></a>
+      <figcaption><b>(c) Under-expanded</b>, p<sub>e</sub> &gt; p<sub>atm</sub>. Above the design pressure. The jet expands and forms large shock cells.</figcaption>
+    </figure>
+  </div>
+  <div class="grid2">
+    <figure>
+      <a href="img/schlieren-still-1.webp"><img src="img/schlieren-still-1.webp" width="1000" height="701" loading="lazy" alt="Schlieren photo of the exit jet with crossing oblique shocks"></a>
+      <figcaption><b>Schlieren still</b> from a phone camera. The crossing dark lines are oblique shocks.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/schlieren-still-2.webp"><img src="img/schlieren-still-2.webp" width="1000" height="726" loading="lazy" alt="Second schlieren photo of the exit jet showing a diamond pattern of shocks"></a>
+      <figcaption><b>Schlieren still</b> from the same session, with the shock-diamond lattice repeating downstream.</figcaption>
+    </figure>
+  </div>
+  <div class="grid2">
+    <figure>
+      <a href="img/nozzle-prototypes.webp"><img src="img/nozzle-prototypes.webp" width="1300" height="836" loading="lazy" alt="Four 3D-printed nozzle prototypes next to a US quarter for scale"></a>
+      <figcaption><b>Prototypes 1 to 4</b>, planar and axisymmetric, next to a US quarter for scale.</figcaption>
+    </figure>
+    <figure>
+      <a href="img/expo-nozzles.webp"><img src="img/expo-nozzles.webp" width="1400" height="711" loading="lazy" alt="Renders and cross sections of three demo nozzles designed for Mach 1, 2 and 3"></a>
+      <figcaption><b>Expo demo nozzles</b> for Mach 1, 2 and 3, all with the same 0.25 in throat and 3/4 NPT inlet.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="how">
+  <h2>How It Works</h2>
+  <p class="lead">Squeeze the flow to Mach 1, then let it expand past the speed of sound.</p>
+  <p>Below the speed of sound, gas speeds up when the passage gets narrower. Above it, the opposite is true: supersonic gas speeds up when the passage gets <em>wider</em>. A converging-diverging (de Laval) nozzle uses both. The converging section accelerates the air to exactly Mach 1 at the narrowest point, the throat. The diverging section then expands it to supersonic speed. For our nozzle, an exit-to-throat area ratio of 1.73 gives Mach 2 at the exit.</p>
+  <p>The jet leaves the nozzle at its own exit pressure, which usually doesn't match the room. The mismatch forms waves that repeat down the jet as a chain of "shock diamonds":</p>
+  <div class="regimes">
+    <div><b>Over-expanded</b>p<sub>e</sub> &lt; p<sub>atm</sub>. Oblique shocks at the exit squeeze the jet inward.</div>
+    <div><b>Perfectly expanded</b>p<sub>e</sub> = p<sub>atm</sub>. The jet leaves cleanly with only weak waves. This is the design point, about 100 psig supply.</div>
+    <div><b>Under-expanded</b>p<sub>e</sub> &gt; p<sub>atm</sub>. Expansion fans at the exit let the jet spread outward.</div>
+  </div>
+  <figure>
+    <a href="img/shock-types.webp"><img src="img/shock-types.webp" width="1400" height="587" loading="lazy" alt="Diagrams of a normal shock inside a nozzle, oblique shocks at an over-expanded exit, and expansion fans at an under-expanded exit, with property changes across each wave"></a>
+    <figcaption><b>Wave types.</b> A normal shock inside the nozzle (a) drops the flow to subsonic. Oblique shocks (b) and expansion fans (c) form at the exit.</figcaption>
+  </figure>
+</section>
+
+<section id="schlieren">
+  <h2>How Schlieren Imaging Works</h2>
+  <p class="lead">Air is invisible, but a shock wave bends light. Schlieren turns that bending into brightness.</p>
+  <p class="note">Step through the diagram with the numbered buttons. On a phone, swipe the drawing sideways to see all of it.</p>
+  <div class="sch" data-step="1">
+    <div class="sch-scroll"><svg class="sch-diagram" viewBox="0 0 800 300" role="img" aria-labelledby="schT">
+      <title id="schT">Single-mirror schlieren system: point source, concave mirror, knife edge and camera</title>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#E0A500"/></marker>
+        <marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#C0392B"/></marker>
+      </defs>
+      <!-- beam cone -->
+      <g class="s1 out">
+        <path d="M78,128 L744,40 L744,260 Z" fill="#FFC72C" opacity=".16"/>
+        <line x1="78" y1="128" x2="740" y2="44" stroke="#E0A500" stroke-width="2.5" marker-end="url(#ah)"/>
+        <line x1="78" y1="128" x2="740" y2="256" stroke="#E0A500" stroke-width="2.5" marker-end="url(#ah)"/>
+      </g>
+      <g class="s2 back">
+        <line x1="740" y1="56" x2="84" y2="172" stroke="#E0A500" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+        <line x1="740" y1="244" x2="84" y2="172" stroke="#E0A500" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+        <circle cx="80" cy="172" r="5" fill="#E0A500"/>
+        <text x="102" y="156" class="lbl">focus</text>
+      </g>
+      <!-- jet -->
+      <g class="s4">
+        <rect x="600" y="132" width="44" height="34" fill="#2b2b33"/>
+        <text x="622" y="186" class="lbl" text-anchor="middle">nozzle</text>
+        <path d="M600,138 L470,132 L470,166 L600,160 Z" fill="#4F2D7F" opacity=".14"/>
+        <path d="M600,138 L570,160 L540,138 L510,160 L480,138 M600,160 L570,138 L540,160 L510,138 L480,160" stroke="#4F2D7F" stroke-width="1.6" fill="none"/>
+        <text x="520" y="122" class="lbl" text-anchor="middle">shock diamonds</text>
+        <line x1="740" y1="118" x2="560" y2="148" stroke="#C0392B" stroke-width="2.5"/>
+        <line x1="560" y1="148" x2="84" y2="196" stroke="#C0392B" stroke-width="2.5" marker-end="url(#ahr)"/>
+        <text x="300" y="250" class="lbl red">bent ray lands below the focus and hits the blade</text>
+      </g>
+      <!-- source -->
+      <circle cx="70" cy="128" r="9" fill="#FFC72C" stroke="#7a5b00"/>
+      <text x="96" y="114" class="lbl">point light source</text>
+      <!-- knife -->
+      <g class="s3">
+        <path d="M66,176 L94,176 L94,290 L66,290 Z" fill="#55555F"/>
+        <path d="M66,176 L94,176" stroke="#1F1F24" stroke-width="2"/>
+        <text x="104" y="282" class="lbl">knife edge (razor blade)</text>
+      </g>
+      <!-- camera -->
+      <rect x="14" y="156" width="40" height="32" rx="5" fill="#1F1F24"/>
+      <circle cx="54" cy="172" r="6" fill="#55555F"/>
+      <text x="14" y="216" class="lbl">camera</text>
+      <!-- mirror -->
+      <path d="M752,30 Q724,150 752,270" fill="none" stroke="#1F1F24" stroke-width="7" stroke-linecap="round"/>
+      <text x="700" y="22" class="lbl">concave mirror</text>
+      <text x="400" y="22" class="lbl muted" text-anchor="middle">1.8 m apart (twice the mirror's 900 mm focal length)</text>
+    </svg></div>
+    <div class="sch-panel">
+      <div class="view" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <defs><clipPath id="cc"><circle cx="50" cy="50" r="46"/></clipPath></defs>
+          <rect width="100" height="100" fill="#111"/>
+          <g clip-path="url(#cc)">
+            <rect class="vbg" width="100" height="100"/>
+            <g class="v4">
+              <rect x="0" y="42" width="34" height="18" fill="#111"/>
+              <path d="M34,43 L44,58 L54,43 L64,58 L74,43 L84,58 M34,58 L44,43 L54,58 L64,43 L74,58 L84,43" stroke="#2a2a2a" stroke-width="2" fill="none"/>
+              <path d="M35,44 L45,59 L55,44 L65,59 L75,44 L85,59" stroke="#f2f2f2" stroke-width="1.2" fill="none" transform="translate(1.5,0)"/>
+            </g>
+          </g>
+        </svg>
+        <span>What the camera sees</span>
+      </div>
+      <div class="txt">
+        <p class="step-t" data-s="1"><b>1. A tiny light.</b> A small, bright point of light (an LED behind a pinhole) shines at a concave mirror, the same shape as a telescope mirror.</p>
+        <p class="step-t" data-s="2"><b>2. The mirror focuses it.</b> The mirror reflects the light back and focuses it to a sharp point. Because the source sits at twice the focal length, the light returns to almost the same spot. A camera placed there sees the whole mirror lit up evenly.</p>
+        <p class="step-t" data-s="3"><b>3. Block half the light.</b> A razor blade, the "knife edge", slides into the focused point and blocks about half of it. The mirror dims evenly to gray. Now the system is sensitive: any ray that moves even a fraction of a millimeter at the focus changes brightness.</p>
+        <p class="step-t" data-s="4"><b>4. Turn on the flow.</b> A shock compresses the air, and denser air bends light slightly, like a weak lens. Rays passing through a shock are deflected, so they land a little above or below the focus. Rays pushed into the blade get blocked and that spot turns dark. Rays pushed away from it get through and that spot turns bright. The invisible shocks show up as dark and light lines.</p>
+      </div>
+      <div class="sch-nav">
+        <button type="button" class="prev" aria-label="Previous step">‹</button>
+        <span class="dots"><button type="button" data-go="1">1</button><button type="button" data-go="2">2</button><button type="button" data-go="3">3</button><button type="button" data-go="4">4</button></span>
+        <button type="button" class="next" aria-label="Next step">›</button>
+      </div>
+    </div>
+  </div>
+  <p class="note">The deflection angles are tiny, a few thousandths of a degree, so the drawing exaggerates them. Shadowgraph, the simpler cousin, skips the knife edge. It shows only the sharpest changes, as paired light and dark lines.</p>
+
+</section>
+
+<section id="team">
+  <h2>The Team</h2>
+  <figure>
+    <a href="img/team.webp"><img src="img/team.webp" width="1400" height="1050" loading="lazy" alt="The four team members standing in front of the Tennessee Tech seal"></a>
+    <figcaption>Left to right: John Goins, Raj Patel, Zachary Fisher, Allyson Holman. Faculty advisor: Dr. Udit Sharma.</figcaption>
+  </figure>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Acknowledgments:</b> Dr. Udit Sharma, Dr. Andrews, Dr. Languri, Jeff Randolph and Aaron Tuk.</p>
+    <p>Reference: J. D. Anderson, <i>Modern Compressible Flow</i>, 3rd ed. McGraw-Hill, 2003.</p>
+    <p>Department of Mechanical Engineering, Tennessee Technological University · Senior Design, Fall 2026</p>
+  </div>
+</footer>
+
+<script>
+(function(){var b=document.querySelector('.sch');if(!b)return;var n=1;
+function go(k){n=Math.max(1,Math.min(4,k));b.setAttribute('data-step',n);
+b.querySelectorAll('[data-go]').forEach(function(x){x.toggleAttribute('aria-current',+x.dataset.go===n);if(+x.dataset.go===n)x.setAttribute('aria-current','step')});}
+b.querySelector('.prev').onclick=function(){go(n-1)};b.querySelector('.next').onclick=function(){go(n+1)};
+b.querySelectorAll('[data-go]').forEach(function(x){x.onclick=function(){go(+x.dataset.go)}});go(1);})();
+</script>
+</body>
+</html>
